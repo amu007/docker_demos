@@ -1,0 +1,36 @@
+#FROM debian:stretch-slim
+FROM ubuntu:16.04
+
+MAINTAINER licz <licz1984@gmail.com>
+
+#RUN useradd es -u 1000 -s /bin/bash 
+RUN apt-get update \
+        && apt-get install --no-install-recommends --no-install-suggests -y sudo curl vim
+
+RUN useradd -c 'ElasticSearch user' -m -d /home/software -s /bin/bash es \
+	&& usermod -g root es
+USER es
+WORKDIR /home/software
+
+
+COPY elasticsearch-5.6.0.tar.gz /home/software/
+COPY jdk-8u144-linux-x64.tar.gz /home/software/
+ADD elasticsearch.yml /home/software
+
+#RUN chmod -R 777 /home/software/elasticsearch.yml
+
+RUN cd /home/software/ \
+	&& tar -zxvf jdk-8u144-linux-x64.tar.gz \
+	&& tar -zxvf elasticsearch-5.6.0.tar.gz
+
+#COPY elasticsearch.yml /home/software/elasticsearch-5.6.0/config/
+
+ENV JAVA_HOME /home/software/jdk1.8.0_144/
+ENV PATH $PATH:$JAVA_HOME/bin
+
+
+
+CMD cp /home/software/elasticsearch.yml /home/software/elasticsearch-5.6.0/config/ \
+	&& cd /home/software/elasticsearch-5.6.0/ \
+	&& bin/elasticsearch
+#CMD ["bash"]

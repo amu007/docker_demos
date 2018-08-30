@@ -1,0 +1,15 @@
+FROM nginx:latest
+
+MAINTAINER licz <licz1984@gmail.com>
+
+COPY jdk-8u144-linux-x64.tar.gz /var/www/webapp/
+COPY target/switcher-provider-0.0.1-SNAPSHOT.jar /var/www/webapp
+
+RUN cd /var/www/webapp \
+	&& tar -zxvf jdk-8u144-linux-x64.tar.gz
+
+ENV JAVA_HOME /var/www/webapp/jdk1.8.0_144
+
+CMD ls /var/www/webapp/jdk1.8.0_144 \
+	&& /var/www/webapp/jdk1.8.0_144/bin/java -jar /var/www/webapp/switcher-provider-0.0.1-SNAPSHOT.jar \
+	&& nginx -g daemon off
